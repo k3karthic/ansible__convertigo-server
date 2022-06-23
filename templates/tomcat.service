@@ -1,0 +1,22 @@
+[Unit]
+Description=Tomcat
+After=syslog.target network.target
+
+[Service]
+Type=forking
+
+User=tomcat
+Group=tomcat
+
+WorkingDirectory=/opt/tomcat9/apache-tomcat-9.0.8/
+
+Environment="JAVA_OPTS=-Dconvertigo.cems.user_workspace_path={{convertigo_workspace}} -Dconvertigo.engine.admin.username={{admin_username}} -Dconvertigo.engine.admin.password={{admin_password}} -Dconvertigo.engine.testplatform.username={{testplatform_username}} -Dconvertigo.engine.testplatform.password={{testplatform_password}} -Dconvertigo.engine.crypto.passphrase={{crypto_passphrase}}"
+
+Environment="CATALINA_BASE=/opt/tomcat9/apache-tomcat-9.0.8/"
+Environment="CATALINA_HOME=/opt/tomcat9/apache-tomcat-9.0.8/"
+
+ExecStart=/opt/tomcat9/apache-tomcat-9.0.8/bin/startup.sh
+ExecStop=/opt/tomcat9/apache-tomcat-9.0.8/bin/shutdown.sh
+
+[Install]
+WantedBy=multi-user.target

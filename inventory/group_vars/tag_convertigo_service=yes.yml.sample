@@ -1,0 +1,7 @@
+convertigo_workspace: "/workspace"
+admin_username: "admin"
+admin_password: "<password>"
+testplatform_username: "test"
+testplatform_password: "<password>"
+crypto_passphrase: "<long random string>"
+domain_name: "<domain name of server>"

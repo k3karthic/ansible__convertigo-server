@@ -1,0 +1,123 @@
+---
+- name: update apt
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: update repositories
+      ansible.builtin.apt:
+          cache_valid_time: 86400
+          update_cache: yes
+
+    - name: install dependencies
+      ansible.builtin.apt:
+        name:
+          - openjdk-11-jdk
+        state: present
+
+    - name: create tomcat user
+      ansible.builtin.user:
+        name: tomcat
+
+    - name: create tomcat group
+      ansible.builtin.group:
+        name: tomcat
+
+    - name: create tomcat directory
+      ansible.builtin.file:
+        path: /opt/tomcat9
+        owner: tomcat
+        group: tomcat
+        mode: 755
+        state: directory
+
+    - name: download & unarchive tomcat
+      ansible.builtin.unarchive:
+        src: https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.8/bin/apache-tomcat-9.0.8.tar.gz
+        dest: /opt/tomcat9
+        remote_src: yes
+        creates: /opt/tomcat9/apache-tomcat-9.0.8/webapps
+
+    - name: remove default ROOT app
+      ansible.builtin.file:
+        path: /opt/tomcat9/apache-tomcat-9.0.8/webapps/ROOT
+        state: absent
+
+    - name: create empty ROOT directory
+      ansible.builtin.file:
+        path: /opt/tomcat9/apache-tomcat-9.0.8/webapps/ROOT
+        owner: tomcat
+        group: tomcat
+        mode: 755
+        state: directory
+
+    - name: download convertigo war
+      ansible.builtin.unarchive:
+        src: https://github.com/convertigo/convertigo/releases/download/8.0.1/convertigo-8.0.1.war
+        dest: /opt/tomcat9/apache-tomcat-9.0.8/webapps/ROOT
+        remote_src: yes
+        creates: /opt/tomcat9/apache-tomcat-9.0.8/webapps/ROOT/index.html
+
+    - name: reset permissions for tomcat
+      ansible.builtin.file:
+        path: /opt/tomcat9
+        owner: tomcat
+        group: tomcat
+        mode: '0755'
+        recurse: yes
+        state: directory
+
+    - name: open tcp 28080
+      ansible.builtin.iptables:
+        action: insert
+        chain: INPUT
+        protocol: tcp
+        destination_port: 28080
+        ctstate: NEW
+        jump: ACCEPT
+        comment: Allow Convertigo communication
+
+    - name: save iptables
+      ansible.builtin.shell:
+        cmd: iptables-save > /etc/iptables/rules.v4
+
+    - name: create systemd script
+      ansible.builtin.template:
+        src: tomcat.service
+        dest: /etc/systemd/system/tomcat.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: enable tomcat.service
+      ansible.builtin.systemd:
+        name: tomcat.service
+        state: stopped
+        enabled: yes
+        daemon_reload: yes
+
+    - name: create workspace directory
+      ansible.builtin.file:
+        path: "{{ convertigo_workspace }}"
+        owner: tomcat
+        group: tomcat
+        mode: "0755"
+        state: directory
+
+    - name: enable reverse proxy in nginx
+      ansible.builtin.template:
+        src: tomcat.nginx
+        dest: /etc/nginx/sites-enabled/tomcat
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: start tomcat.service
+      ansible.builtin.systemd:
+        name: tomcat.service
+        state: started
+
+    - name: restart nginx.service
+      ansible.builtin.systemd:
+        name: nginx.service
+        state: restarted

@@ -1,0 +1,3 @@
+ssh/oracle_3
+ssh/oracle_3.pub
+inventory/group_vars/tag_convertigo_service\=yes.yml
