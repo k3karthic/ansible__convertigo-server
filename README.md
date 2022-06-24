@@ -39,15 +39,25 @@ All target Ubuntu instances must have the freeform tag `nginx_service: yes`.
 	1. `convertigo_version`: Latest version of Convertigo Server [https://github.com/convertigo/convertigo/releases](https://github.com/convertigo/convertigo/releases)
 	1. `convertigo_workspace`: Convertigo workspace path
 	1. `admin_username`: Username for administrator
-	1. `admin_password`: Password for administrator as hex encoded SHA-512 hash.
+	1. `admin_password`: Password for administrator as hex encoded SHA-512 hash. Details on how to generate the value are [below](#password_hash).
 	1. `testplatform_username`: Test Platform username
-	1. `testplatform_password`: Test Platform password as hex encoded SHA-512 hash.
+	1. `testplatform_password`: Test Platform password as hex encoded SHA-512 hash. Details on how to generate the value are [below](#password_hash).
 	1. `crypto_passphrase`: Passphrase that Convertigo will use to encrypt secrets
 	1. `domain_name`: Domain name of the instance
 1. Update `inventory/oracle.oci.yml`,
     1. Specify the region where you have deployed your server on Oracle Cloud. List of regions are at [docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm](https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm).
     1. Configure the authentication as per the [Oracle Guide](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/sdkconfig.htm#SDK_and_CLI_Configuration_File)
 4. Set username and ssh authentication in `inventory/group_vars/all.yml`
+
+## <a id="password_hash"></a>Password Hash
+
+The `admin_password` and `testplatform_password` properties expect a hex encoded SHA-512 hash. The REPL below can be used to generate the same,
+
+[https://replit.com/@k3karthic/Convertigo-Password-Encode#Main.java](https://replit.com/@k3karthic/Convertigo-Password-Encode#Main.java)
+
+Click on the "Run" button at the top and enter your password in the console.
+
+![REPL Screenshot](resources/screenshot_repl_password_generate.png)
 
 ## Deployment
 
