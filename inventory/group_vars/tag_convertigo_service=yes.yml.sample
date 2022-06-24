@@ -1,3 +1,6 @@
+tomcat_version: "9.0.64"
+convertigo_version: "8.0.1"
+
 convertigo_workspace: "/workspace"
 admin_username: "admin"
 admin_password: "<password>"

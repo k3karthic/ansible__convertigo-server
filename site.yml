@@ -25,7 +25,7 @@
 
     - name: create tomcat directory
       ansible.builtin.file:
-        path: /opt/tomcat9
+        path: /opt/tomcat
         owner: tomcat
         group: tomcat
         mode: 755
@@ -33,19 +33,19 @@
 
     - name: download & unarchive tomcat
       ansible.builtin.unarchive:
-        src: https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.8/bin/apache-tomcat-9.0.8.tar.gz
-        dest: /opt/tomcat9
+        src: https://archive.apache.org/dist/tomcat/tomcat-9/v{{tomcat_version}}/bin/apache-tomcat-{{tomcat_version}}.tar.gz
+        dest: /opt/tomcat
         remote_src: yes
-        creates: /opt/tomcat9/apache-tomcat-9.0.8/webapps
+        creates: /opt/tomcat/apache-tomcat-{{tomcat_version}}/webapps
 
     - name: remove default ROOT app
       ansible.builtin.file:
-        path: /opt/tomcat9/apache-tomcat-9.0.8/webapps/ROOT
+        path: /opt/tomcat/apache-tomcat-{{tomcat_version}}/webapps/ROOT
         state: absent
 
     - name: create empty ROOT directory
       ansible.builtin.file:
-        path: /opt/tomcat9/apache-tomcat-9.0.8/webapps/ROOT
+        path: /opt/tomcat/apache-tomcat-{{tomcat_version}}/webapps/ROOT
         owner: tomcat
         group: tomcat
         mode: 755
@@ -53,14 +53,14 @@
 
     - name: download convertigo war
       ansible.builtin.unarchive:
-        src: https://github.com/convertigo/convertigo/releases/download/8.0.1/convertigo-8.0.1.war
-        dest: /opt/tomcat9/apache-tomcat-9.0.8/webapps/ROOT
+        src: https://github.com/convertigo/convertigo/releases/download/{{convertigo_version}}/convertigo-{{convertigo_version}}.war
+        dest: /opt/tomcat/apache-tomcat-{{tomcat_version}}/webapps/ROOT
         remote_src: yes
-        creates: /opt/tomcat9/apache-tomcat-9.0.8/webapps/ROOT/index.html
+        creates: /opt/tomcat/apache-tomcat-{{tomcat_version}}/webapps/ROOT/index.html
 
     - name: reset permissions for tomcat
       ansible.builtin.file:
-        path: /opt/tomcat9
+        path: /opt/tomcat
         owner: tomcat
         group: tomcat
         mode: '0755'
@@ -79,7 +79,7 @@
 
     - name: save iptables
       ansible.builtin.shell:
-        cmd: iptables-save > /etc/iptables/rules.v4
+        cmd: iptables-save | grep -v f2b- > /etc/iptables/rules.v4
 
     - name: create systemd script
       ansible.builtin.template:
