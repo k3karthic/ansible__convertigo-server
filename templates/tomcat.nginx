@@ -1,20 +1,20 @@
 server {
-    listen 28080 ssl http2;
-    listen [::]:28080 ssl http2;
+	listen 28080 ssl http2;
+	listen [::]:28080 ssl http2;
 
-    ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
-    ssl_session_timeout 1d;
-    ssl_session_cache shared:MozSSL:10m;  # about 40000 sessions
-    ssl_session_tickets off;
+	ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
+	ssl_session_timeout 1d;
+	ssl_session_cache shared:MozSSL:10m;  # about 40000 sessions
+	ssl_session_tickets off;
 
-    # modern configuration
-    ssl_protocols TLSv1.3;
+	# modern configuration
+	ssl_protocols TLSv1.3;
 	ssl_dhparam /etc/nginx/dhparams.pem;
 	ssl_prefer_server_ciphers on;
 
-    # HSTS (ngx_http_headers_module is required) (63072000 seconds)
-    add_header Strict-Transport-Security "max-age=63072000" always;
+	# HSTS (ngx_http_headers_module is required) (63072000 seconds)
+	add_header Strict-Transport-Security "max-age=63072000" always;
 
 	location / {
 		auth_basic "Restricted Content";
@@ -36,8 +36,7 @@ server {
 		proxy_redirect off;
 		proxy_pass http://127.0.0.1:8080/openapi;
 
-		proxy_http_version 1.1;
-		proxy_set_header Upgrade $http_upgrade;
-		proxy_set_header Connection "upgrade";
+		# Close connections to avoid lingering sessions
+		proxy_set_header Connection "close";
 	}
 }
