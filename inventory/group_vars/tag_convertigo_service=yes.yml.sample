@@ -1,5 +1,6 @@
 tomcat_version: "9.0.64"
-convertigo_version: "8.0.1"
+convertigo_src: "https://github.com/convertigo/convertigo/releases/download/8.0.1/convertigo-8.0.1.war"
+convertigo_src_remote: yes
 
 convertigo_workspace: "/workspace"
 admin_username: "admin"

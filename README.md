@@ -36,7 +36,8 @@ All target Ubuntu instances must have the freeform tag `nginx_service: yes`.
 1. Create an inventory file for the instance in `inventory/group_vars/`. Use `inventory/group_vars/tag_ydns_host=mg-oracle3.ydns.eu.yml.sample` as a reference. Specify the following variables,
 
 	1. `tomcat_version`: Latest version of Tomcat 9
-	1. `convertigo_version`: Latest version of Convertigo Server [https://github.com/convertigo/convertigo/releases](https://github.com/convertigo/convertigo/releases)
+	1. `convertigo_src`: URL to latest version of Convertigo Server [https://github.com/convertigo/convertigo/releases](https://github.com/convertigo/convertigo/releases) or path to local war
+	1. `convertigo_src_remote`: `yes` if `convertigo_src` points to a remote URL
 	1. `convertigo_workspace`: Convertigo workspace path
 	1. `admin_username`: Username for administrator
 	1. `admin_password`: Password for administrator as hex encoded SHA-512 hash. Details on how to generate the value are [below](#password_hash).

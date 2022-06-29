@@ -53,9 +53,9 @@
 
     - name: download convertigo war
       ansible.builtin.unarchive:
-        src: https://github.com/convertigo/convertigo/releases/download/{{convertigo_version}}/convertigo-{{convertigo_version}}.war
+        src: "{{convertigo_src}}"
         dest: /opt/tomcat/apache-tomcat-{{tomcat_version}}/webapps/ROOT
-        remote_src: yes
+        remote_src: "{{convertigo_src_remote}}"
         creates: /opt/tomcat/apache-tomcat-{{tomcat_version}}/webapps/ROOT/index.html
 
     - name: reset permissions for tomcat
